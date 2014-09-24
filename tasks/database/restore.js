@@ -1,21 +1,20 @@
 /**
- * Module dependencies.
- */
-
-var async = require('async');
-var path = require('path');
-
-/**
  * Database restore task.
  * - Restore previous database from backup
  */
 
+'use strict';
+
 module.exports = function (grunt) {
+
+  var async = require('async');
+  var path = require('path');
+  var util = require('../../lib/util').init(grunt);
 
   grunt.registerTask('db:restore', function() {
     var done = this.async();
-    var environment = getEnvironment();
-    grunt.shipit.remote('readlink ' + path.join(getConfigOption('deployTo', environment), 'current'), function (err, targets) {
+    var environment = util.getEnvironment();
+    grunt.shipit.remote('readlink ' + path.join(util.getConfigOption('deployTo', environment), 'current'), function (err, targets) {
       if (err) {
         grunt.log.error(err);
         done();
@@ -30,16 +29,6 @@ module.exports = function (grunt) {
       grunt.log.writeln(releaseDirnames[0]);
 
     });
-
-    function getEnvironment(){
-        var tasks = grunt.cli.tasks[0];
-        var environment = tasks.split(":");
-        return environment[1];
-    }
-
-    function getConfigOption(option, environment){
-        return grunt.config('shipit.'+environment+'.'+option) ? grunt.config('shipit.'+environment+'.'+option) : grunt.config('shipit.options.'+option);
-    }
 
 /*
     grunt.shipit.remote('ls -xr '+path.join(getConfigOption('deployTo', environment), 'releases'), function(err, stdout){

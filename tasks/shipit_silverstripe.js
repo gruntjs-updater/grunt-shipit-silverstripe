@@ -6,19 +6,20 @@
  * Licensed under the MIT license.
  */
 
-var path = require('path');
-
 'use strict';
 
 module.exports = function(grunt) {
 
-  grunt.loadTasks(path.join(__dirname, 'db'));
-  grunt.loadTasks(path.join(__dirname, 'ss'));
+  var path = require('path');
+  var util = require('../lib/util').init(grunt);
+
+  grunt.loadTasks(path.join(__dirname, 'database'));
+  grunt.loadTasks(path.join(__dirname, 'silverstripe'));
 
   grunt.shipit.on('deploy', function () {
     // Check for branch in cli command
     if (!grunt.option('branch')){
-      var environment = getEnvironment();
+      var environment = util.getEnvironment();
       // Check for branch variable in config, starting with environment
       if(grunt.config('shipit.'+environment+'.branch')){
         grunt.shipit.config.branch = grunt.config('shipit.'+environment+'.branch');
@@ -51,11 +52,5 @@ module.exports = function(grunt) {
       'db:restore'
     ]);
   });
-
-  function getEnvironment(){
-    var tasks = grunt.cli.tasks[0];
-    var environment = tasks.split(":");
-    return environment[1];
-  }
 
 };
