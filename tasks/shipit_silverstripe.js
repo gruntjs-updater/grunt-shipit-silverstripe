@@ -6,45 +6,56 @@
  * Licensed under the MIT license.
  */
 
+var path = require('path');
+
 'use strict';
 
 module.exports = function(grunt) {
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
+  grunt.loadTasks(path.join(__dirname, 'db'));
+  grunt.loadTasks(path.join(__dirname, 'ss'));
 
-  grunt.registerMultiTask('shipit_silverstripe', 'SilverStripe tasks for the ShipIt deployment plugin for Grunt.js', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({
-      punctuation: '.',
-      separator: ', '
-    });
+  grunt.shipit.on('deploy', function () {
+    // Check for branch in cli command
+    if (!grunt.option('branch')){
+      var environment = getEnvironment();
+      // Check for branch variable in config, starting with environment
+      if(grunt.config('shipit.'+environment+'.branch')){
+        grunt.shipit.config.branch = grunt.config('shipit.'+environment+'.branch');
+      } else if(grunt.config('shipit.options.branch')){
+        grunt.shipit.config.branch = grunt.config('shipit.options.branch');
+      } else {
+        throw new Error('You must specify a branch using --branch.');
+      }
+    } else {
+      grunt.shipit.config.branch = grunt.option('branch');
+    }
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
+    grunt.task.run([
+      'db:backup',
+      'db:purge'
+    ]);
 
-      // Handle options.
-      src += options.punctuation;
-
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
-
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
-    });
   });
+
+  grunt.shipit.on('published', function () {
+    grunt.task.run([
+      'ss:shared',
+      'ss:composer',
+      'ss:devbuild'
+    ]);
+  });
+
+  grunt.shipit.on('rollback', function () {
+    grunt.task.run([
+      'db:restore'
+    ]);
+  });
+
+  function getEnvironment(){
+    var tasks = grunt.cli.tasks[0];
+    var environment = tasks.split(":");
+    return environment[1];
+  }
 
 };

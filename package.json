@@ -18,7 +18,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/jeffwhitfield/grunt-shipit-silverstripe/blob/master/LICENSE-MIT"
+      "url": "https://github.com/jeffwhitfield/grunt-shipit-silverstripe/blob/master/LICENSE"
     }
   ],
   "engines": {
@@ -33,10 +33,17 @@
     "grunt-contrib-nodeunit": "^0.3.3",
     "grunt": "~0.4.5"
   },
+  "dependencies": {
+    "async": "^0.8.0",
+    "lodash": "^2.4.1"
+  },
   "peerDependencies": {
     "grunt": "~0.4.5"
   },
   "keywords": [
-    "gruntplugin"
+    "gruntplugin",
+    "silverstripe",
+    "shipit",
+    "deployment"
   ]
 }
