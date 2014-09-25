@@ -9,14 +9,12 @@ module.exports = function (grunt) {
 
   var async = require('async');
   var path = require('path');
-  var util = require('../../lib/util').init(grunt);
 
   grunt.registerTask('ss:devbuild', function() {
     var done = this.async();
-    var environment = util.getEnvironment();
-    var current = path.join(util.getConfigOption('deployTo', environment), 'current');
-    var server = util.getConfigOption('servers', environment).split('@');
-    var optionHost = util.getConfigOption('host', environment);
+    var current = path.join(grunt.shipit.config.deployTo, 'current');
+    var server = grunt.shipit.config.servers.split('@');
+    var optionHost = grunt.shipit.config.host;
     var host = optionHost ? optionHost : (server.length > 1 ? server[1] : server[0]);
     async.series([
       function(moveon){

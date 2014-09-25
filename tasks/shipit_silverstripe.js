@@ -11,7 +11,6 @@
 module.exports = function(grunt) {
 
   var path = require('path');
-  var util = require('../lib/util').init(grunt);
 
   grunt.loadTasks(path.join(__dirname, 'database'));
   grunt.loadTasks(path.join(__dirname, 'silverstripe'));
@@ -19,13 +18,8 @@ module.exports = function(grunt) {
   grunt.shipit.on('deploy', function () {
     // Check for branch in cli command
     if (!grunt.option('branch')){
-      var environment = util.getEnvironment();
       // Check for branch variable in config, starting with environment
-      if(grunt.config('shipit.'+environment+'.branch')){
-        grunt.shipit.config.branch = grunt.config('shipit.'+environment+'.branch');
-      } else if(grunt.config('shipit.options.branch')){
-        grunt.shipit.config.branch = grunt.config('shipit.options.branch');
-      } else {
+      if(!grunt.shipit.config.branch){
         throw new Error('You must specify a branch using --branch.');
       }
     } else {

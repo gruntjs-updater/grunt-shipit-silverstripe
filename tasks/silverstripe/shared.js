@@ -9,16 +9,14 @@ module.exports = function (grunt) {
 
   var async = require('async');
   var path = require('path');
-  var util = require('../../lib/util').init(grunt);
 
   grunt.registerTask('ss:shared', function() {
     var done = this.async();
-    var environment = util.getEnvironment();
-    var deployTo = util.getConfigOption('deployTo', environment);
+    var deployTo = grunt.shipit.config.deployTo;
     var current =  path.join(deployTo, 'current');
     var shared = path.join(deployTo, 'shared');
-    var linkedFiles = grunt.config('shipit.options.linkedFiles');
-    var linkedDirs = grunt.config('shipit.options.linkedDirs');
+    var linkedFiles = grunt.shipit.config.linkedFiles;
+    var linkedDirs = grunt.shipit.config.linkedDirs;
     var tasks = "";
     async.eachSeries(linkedFiles, function (file, next) {
       async.series([
