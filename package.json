@@ -1,7 +1,7 @@
 {
   "name": "grunt-shipit-silverstripe",
   "description": "SilverStripe tasks for the ShipIt deployment plugin for Grunt.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/jeffwhitfield/grunt-shipit-silverstripe",
   "author": {
     "name": "Jeff Whitfield",
