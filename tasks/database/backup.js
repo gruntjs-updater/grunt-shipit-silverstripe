@@ -9,15 +9,19 @@ module.exports = function (grunt) {
 
   var async = require('async');
   var path = require('path');
+  var isNull = require('lodash').isNull;
 
   grunt.registerTask('db:backup', function() {
     var done = this.async();
     var deployTo = grunt.shipit.config.deployTo;
     var currentPath = path.join(deployTo, 'current');
     var environment = getEnvironment();
-    grunt.shipit.remote('readlink ' + currentPath, function (err, targets) {
+    grunt.shipit.remote('if test -e ' + currentPath + '; then readlink ' + currentPath + '; fi', function (err, targets) {
       if (err) return done(err);
       var release = targets.map(computeReleaseDirname);
+      if (isNull(release[0])){
+        return done();
+      }
       if (! equalValues(release)){
         return done(new Error('Remote server are not synced.'));
       }
